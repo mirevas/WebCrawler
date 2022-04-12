@@ -13,7 +13,7 @@ def get_page(url, params=None, headers=None):
     page = BeautifulSoup(response.text, 'lxml')
     print(response.url)
     print("响应状态码：", response.status_code)
-
+    
     return page
 
 
