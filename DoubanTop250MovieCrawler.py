@@ -12,7 +12,7 @@ def get_page(url, params=None, headers=None):
     response = requests.get(url, headers=headers, params=params)
     page = BeautifulSoup(response.text, 'lxml')
     print(response.url)
-    print("响应状态码：", response.status_code)
+    print("response status code", response.status_code)
     
     return page
 
@@ -34,7 +34,7 @@ for i in range(11):
         title_list.append(title)
     time.sleep(1)
 
-print(title_list)
+# print(title_list)
 doc = open('Top250Films.txt', 'w')
 for i in range(len(title_list)):
     print(title_list[i],file=doc)
