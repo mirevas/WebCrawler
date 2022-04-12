@@ -1,0 +1,4 @@
+*.txt
+__*
+AMCMovies/
+.DS_Store
