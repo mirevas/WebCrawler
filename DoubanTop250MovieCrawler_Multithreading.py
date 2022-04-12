@@ -1,7 +1,7 @@
 ##############################################################################
 # Author: @mirevas
-# Date: 2019.12.16
-# Reference：https://blog.csdn.net/weixin_44547562/article/details/103533502
+# Date: 2022.4.12
+# Reference：https://blog.csdn.net/jclian91/article/details/80738749
 #############################################################################
 
 import time
@@ -10,7 +10,7 @@ import requests
 import random
 import urllib.request
 from bs4 import BeautifulSoup
-
+from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 
 def download_picture(url):
 
@@ -29,7 +29,7 @@ def download_picture(url):
 
     thisua = random.choice(uapools)
     headers = {
-       'User-Agent': thisua, 
+       'User-Agent':thisua, 
         'Host': 'movie.douban.com'
     }
 
@@ -42,7 +42,7 @@ def download_picture(url):
     
     for picture_name, picture_link in zip(picture_name_list, picture_link_list):
         print("Downloading %s" % picture_name)
-        urllib.request.urlretrieve(picture_link, './DoubanTop250Movies_1/%s.jpg' % picture_name)
+        urllib.request.urlretrieve(picture_link, './DoubanTop250Movies/%s.jpg' % picture_name)
 
 
 def mkdir(path):
@@ -53,21 +53,20 @@ def mkdir(path):
 
 
 def main():
-    file_name = "DoubanTop250Movies_1"
+    file_name = "DoubanTop250Movies"
     mkdir(file_name)
     start_urls = ["https://movie.douban.com/top250"]
     for i in range(1, 10):
         start_urls.append("https://movie.douban.com/top250?start=%d&filter=" % (25 * i))
 
     t1 = time.time()
-    for url in start_urls:
-        print("Downloading from %s" % url)
-        download_picture(url)
-        time.sleep(1)
+    executor = ThreadPoolExecutor(max_workers=10)  
+    future_tasks = [executor.submit(download_picture, url) for url in start_urls]
+    wait(future_tasks, return_when=ALL_COMPLETED)
 
     print('*' * 50)
     t2 = time.time()
-    print('Single thread downloading time：%s' % (t2 - t1))
+    print('Multithreading downloading time：%s' % (t2 - t1))
     print('*' * 50)
 
 main()
